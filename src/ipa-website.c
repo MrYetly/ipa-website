@@ -47,22 +47,30 @@ cleanup:
 
 void handle_home(const http_request_t *req, http_response_t *res) {
 	char *body = NULL;
-	size_t body_len = 0;
+	size_t body_size = 0;
 
-	body = load_html(STATIC_DIR "index.html", &body_len);
+	body = load_html(STATIC_DIR "index.html", &body_size);
 
 	if (body) {
 		res->status_code = 200;
-		snprintf(res->headers[0].key, MAX_HEADER_KEY_LEN, "Context-Length");
-		snprintf(res->headers[0].val, MAX_HEADER_VAL_LEN, "%zu", body_len);
+		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "OK");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Length");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%zu", body_size);
+		++res->next_header_idx;
 		res->body = body;
-		res->body_len = body_len;
+		res->body_size = body_size;
+	} else {
+		res->status_code = 500;
+		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "But why male models?");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Length");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "0");
+		++res->next_header_idx;
 	}
 }
 
 int main(void) {
 	route_t routes[] = {
-		{"GET", "/", handle_home}
+		{"/", "GET", handle_home}
 	};
 	size_t route_count = 1;
 	
