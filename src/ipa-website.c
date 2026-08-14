@@ -73,6 +73,10 @@ int main(void) {
 		{"/", "GET", handle_home}
 	};
 	size_t route_count = 1;
+	app_init_t app_init = {
+		.routes = routes;
+		.route_count = route_count;
+	};
 	
-	app(routes, route_count);
+	app(app_init);
 }
