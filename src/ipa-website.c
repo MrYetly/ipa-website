@@ -74,9 +74,9 @@ int main(void) {
 	};
 	size_t route_count = 1;
 	app_init_t app_init = {
-		.routes = routes;
-		.route_count = route_count;
+		.routes = routes,
+		.route_count = route_count,
 	};
 	
-	app(app_init);
+	app(&app_init);
 }
