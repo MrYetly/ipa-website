@@ -7,123 +7,25 @@
 	
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
 	<!-- get fonts -->
 	<link href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:wght@400;700&family=Jacquard+24&display=block" rel="stylesheet">
 
-	<style>
-		:root {
-			--content-container-width: 500px;
-			--page-top-bottom-padding: 50px;
-			--fade-in-duration: 2s;
-			--fade-in-delay: 0.5s;
-		}
-		body {
-			min-height: 100vh;
-			margin: 0px;
-		}
-		p {
-			font-family: "Libertinus Serif", system-ui;
-			font-weight: 400;
-			font-style: normal;
-		}
-		h1 {
-			font-family: "Jacquard 24", system-ui;
-			font-weight: 400;
-			font-style: normal;
-		}
-		.page {
-			align-content: center;
-			height: calc(100vh - 2 * var(--page-top-bottom-padding));
-			padding-top: var(--page-top-bottom-padding);
-			padding-bottom: var(--page-top-bottom-padding);
-			padding-left: 10vw;
-			padding-right: 10vw;
-		}
-		.content-container {
-			padding-left: 25px;
-			padding-right: 25px;
-		}
-		.greeting {
-			font-size: 4rem;
-		}
-		.greeting,
-		.sub-greeting {
-			text-align: center;
-			animation-name: fade-in;
-			animation-duration: var(--fade-in-duration);
-			animation-timing-function: ease;
-			animation-fill-mode: both;
-		}
-		.greeting {
-			animation-delay: var(--fade-in-duration);
-		}
-		.sub-greeting {
-			animation-delay: calc(var(--fade-in-duration) + 2 * var(--fade-in-delay));
-		}
-		a.menu-option,
-		a.menu-option:visited {
-			font-family: "Jacquard 24", system-ui;
-			font-weight: 400;
-			font-style: normal;
-			font-size: 4rem;
-			text-align: center;
-			display: block;
-			text-decoration: none;
-			color: inherit;
-		}
-		a.menu-sub-option,
-		a.menu-sub-option:visited {
-			font-family: "Libertinus Serif", system-ui;
-			font-weight: 400;
-			font-style: normal;
-			text-align: center;
-			display: block;
-			text-decoration: none;
-			color: inherit;
-		}
-		@keyframes fade-in {
-			from {
-				opacity: 0;
-				transform: translateY(-20px);
-			}
-			to {
-				opacity: 1;
-			}
-		}
-		@media (min-width: 768px) {
-			.page {
-				padding-left: calc(50vw - var(--content-container-width) / 2);
-				padding-right: calc(50vw - var(--content-container-width) / 2);
-			}
-		}
-	</style>
+	<!-- get htmx -->
+	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 	<div class="page">
-		<div class="content-container">
+		<div class="content-container" id="content-container">
 			<h1 class="greeting">Welcome</h1>
-			<p class="sub-greeting">
+			<p class="sub-greeting"
+			   hx-get="/hx/home"
+			   hx-target="#content-container"
+			>
 			Please come in and get to know me.
 			</p>
-		</div>
-	</div>
-	<div class="page menu">
-		<div class="content-container">
-			<a class="menu-sub-option">This Website</a>
-			<a class="menu-sub-option">Prblm Solver</a>
-			<a class="menu-sub-option">Amazon: Optimizing a self service experimentation platform</a>
-			<a class="menu-sub-option">OpenBlock Labs: Crypto Rewards Analytics</a>
-			<a class="menu-sub-option">Just Lindahl Taxation - A Welfarist's Solution</a>
-			<a class="menu-sub-option">Timing of adoption Chapter</a>
-			<a class="menu-sub-option">OMCs chapter</a>
-			<a href="#work" class="menu-option">Work</a>
-			<a href="#play" class="menu-option">Play</a>
-			<a class="menu-sub-option">The Expanse book series</a>
-			<a class="menu-sub-option">Clair Obscur: Expidition 33</a>
-			<a class="menu-sub-option">Settlers of Catan</a>
-			<a class="menu-sub-option">Soccer (Arsenal and Playing)</a>
 		</div>
 	</div>
 </body>

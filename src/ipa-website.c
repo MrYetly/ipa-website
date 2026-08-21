@@ -45,17 +45,20 @@ cleanup:
 	return buffer;
 }
 
-void handle_home(const http_request_t *req, http_response_t *res) {
+void static_response(char *path, char *content_type,  http_response_t *res) {
 	char *body = NULL;
 	size_t body_size = 0;
 
-	body = load_html(STATIC_DIR "index.html", &body_size);
+	body = load_html(path, &body_size);
 
 	if (body) {
 		res->status_code = 200;
 		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "OK");
 		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Length");
 		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%zu", body_size);
+		++res->next_header_idx;
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Type");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%s", content_type);
 		++res->next_header_idx;
 		res->body = body;
 		res->body_size = body_size;
@@ -68,11 +71,25 @@ void handle_home(const http_request_t *req, http_response_t *res) {
 	}
 }
 
+void handle_landing(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "index.html", "text/html", res);
+}
+
+void handle_home(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "hx/work_play.html", "text/html", res);
+}
+
+void handle_style(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "style.css", "text/css", res);
+}
+
 int main(void) {
 	route_t routes[] = {
-		{"/", "GET", handle_home}
+		{"/", "GET", handle_landing},
+		{"/hx/home", "GET", handle_home},
+		{"/style.css", "GET", handle_style}
 	};
-	size_t route_count = 1;
+	size_t route_count = sizeof(routes)/sizeof(route_t);
 	app_init_t app_init = {
 		.routes = routes,
 		.route_count = route_count,
