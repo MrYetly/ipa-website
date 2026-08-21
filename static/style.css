@@ -3,6 +3,8 @@
 	--page-top-bottom-padding: 50px;
 	--fade-in-duration: 2s;
 	--fade-in-delay: 0.5s;
+	--pulse-border-frequency: 2s;
+	--pulse-border-delay: 0s;
 }
 body {
 	min-height: 100vh;
@@ -32,41 +34,33 @@ h1 {
 }
 .greeting {
 	font-size: 4rem;
-}
-.greeting,
-.sub-greeting {
 	text-align: center;
 	animation-name: fade-in;
 	animation-duration: var(--fade-in-duration);
-	animation-timing-function: ease;
 	animation-fill-mode: both;
-}
-.greeting {
 	animation-delay: var(--fade-in-duration);
 }
 .sub-greeting {
-	animation-delay: calc(var(--fade-in-duration) + 2 * var(--fade-in-delay));
-}
-a.menu-option,
-a.menu-option:visited {
-	font-family: "Jacquard 24", system-ui;
-	font-weight: 400;
-	font-style: normal;
-	font-size: 4rem;
+	align-content: center;
 	text-align: center;
-	display: block;
-	text-decoration: none;
-	color: inherit;
-}
-a.menu-sub-option,
-a.menu-sub-option:visited {
-	font-family: "Libertinus Serif", system-ui;
-	font-weight: 400;
-	font-style: normal;
-	text-align: center;
-	display: block;
-	text-decoration: none;
-	color: inherit;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	height: 25px;
+	cursor:pointer;
+
+	border-style: solid;
+	border-width: 1px;
+	border-color: transparent;
+
+	animation-name: fade-in, pulse-border;
+	animation-duration: var(--fade-in-duration), var(--pulse-border-frequency);
+	animation-iteration-count: 1, infinite;
+	animation-direction: normal, alternate;
+	animation-fill-mode: both, none;
+	animation-timing-function: ease, ease-in-out;
+	animation-delay: 
+		calc(var(--fade-in-duration) + 2 * var(--fade-in-delay)),
+		calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay));
 }
 @keyframes fade-in {
 	from {
@@ -75,6 +69,15 @@ a.menu-sub-option:visited {
 	}
 	to {
 		opacity: 1;
+		transform: translateY(0px);
+	}
+}
+@keyframes pulse-border {
+	from {
+		border-color: transparent;
+	}
+	to {
+		border-color: black;
 	}
 }
 @media (min-width: 768px) {
