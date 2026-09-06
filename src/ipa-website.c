@@ -36,7 +36,7 @@ char *load_html(const char *filename, size_t *file_size) {
 	return buffer;
 
 cleanup:
-	perror("Error loading HTML file");
+	perror("\nError loading HTML file");
 	if (f) fclose(f);
 	if (buffer) {
 		free(buffer);
@@ -76,17 +76,47 @@ void handle_landing(const http_request_t *req, http_response_t *res) {
 }
 
 void handle_home(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/work_play.html", "text/html", res);
+	static_response(STATIC_DIR "hx/home.html", "text/html", res);
+}
+
+void handle_work(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "hx/work.html", "text/html", res);
+}
+
+void handle_play(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "hx/play.html", "text/html", res);
+}
+
+void handle_this_website(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "hx/this-website.html", "text/html", res);
+}
+
+void handle_my_interests(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "hx/my-interests.html", "text/html", res);
+}
+
+void handle_portrait(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", "text/plain", res);
 }
 
 void handle_style(const http_request_t *req, http_response_t *res) {
 	static_response(STATIC_DIR "style.css", "text/css", res);
 }
 
+void handle_script(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "script.js", "text/javascript", res);
+}
+
 int main(void) {
 	route_t routes[] = {
 		{"/", "GET", handle_landing},
 		{"/hx/home", "GET", handle_home},
+		{"/hx/work", "GET", handle_work},
+		{"/hx/play", "GET", handle_play},
+		{"/hx/this-website", "GET", handle_this_website},
+		{"/hx/my-interests", "GET", handle_my_interests},
+		{"/hx/ascii-art/portrait", "GET", handle_portrait},
+		{"/script.js", "GET", handle_script},
 		{"/style.css", "GET", handle_style}
 	};
 	size_t route_count = sizeof(routes)/sizeof(route_t);

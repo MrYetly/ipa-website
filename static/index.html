@@ -14,10 +14,13 @@
 	<!-- get htmx -->
 	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
 
+	<!-- get my own style and scripts-->
+	<script src="/script.js" defer></script>
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 	<div class="page">
+		<pre class="ascii-art-background watch-resize" hx-get="/hx/ascii-art/portrait" hx-trigger="load"></pre>
 		<div class="content-container" id="content-container">
 			<h1 class="greeting">Welcome</h1>
 			<p class="sub-greeting"
@@ -30,3 +33,4 @@
 	</div>
 </body>
 </html>
+<!-- work, play, this website, my interests (and "my interests" really lists my most recent interests and aspirations) -->

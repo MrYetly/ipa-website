@@ -3,8 +3,12 @@
 	--page-top-bottom-padding: 50px;
 	--fade-in-duration: 2s;
 	--fade-in-delay: 0.5s;
-	--pulse-border-frequency: 2s;
+	--pulse-border-period: 2s;
 	--pulse-border-delay: 0s;
+	--ascii-art-portrait-height: 400;
+	--ascii-art-portrait-width: 800;
+	--ascii-art-font-size: max(calc(100vh/var(--ascii-art-portrait-height)), calc(100vw/var(--ascii-art-portrait-width)));
+	--ascii-art-width: calc(var(--ascii-art-portrait-width) * var(--ascii-art-font-size));
 }
 body {
 	min-height: 100vh;
@@ -20,31 +24,75 @@ h1 {
 	font-weight: 400;
 	font-style: normal;
 }
+pre {
+  font-family: "Lucida Console", Monaco, "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.0; /* Prevents vertical gaps between lines */
+  letter-spacing: 0; /* Keeps horizontal spacing exact */
+}
 .page {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
 	align-content: center;
-	height: calc(100vh - 2 * var(--page-top-bottom-padding));
-	padding-top: var(--page-top-bottom-padding);
-	padding-bottom: var(--page-top-bottom-padding);
-	padding-left: 10vw;
-	padding-right: 10vw;
+	justify-content: center;
+	height: 100vh;
+	overflow: hidden;
+}
+.ascii-art-background {
+	z-index: 1;
+	position: absolute;
+	left: 0;
+	margin: 0;
+	width: var(--ascii-art-width);
+	font-size: var(--ascii-art-font-size);
+
+	animation-name: background-fade-in;
+	animation-duration: var(--fade-in-duration);
+	animation-fill-mode: both;
+	animation-timing-function: ease;
+	animation-delay: calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay) + var(--pulse-border-period));
 }
 .content-container {
-	padding-left: 25px;
-	padding-right: 25px;
+	z-index: 2;
+	background-color: transparent;
 }
 .greeting {
 	font-size: 4rem;
 	text-align: center;
+	background-color: transparent;
 	animation-name: fade-in;
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode: both;
 	animation-delay: var(--fade-in-duration);
 }
+.landing-menu {
+	font-family: "Jacquard 24", system-ui;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 4rem;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	animation-name: fade-in;
+	animation-duration: var(--fade-in-duration);
+	animation-fill-mode: both;
+	animation-delay: var(--fade-in-duration);
+}
+
+.landing-menu span {
+	cursor: pointer;
+}
+
 .sub-greeting {
 	align-content: center;
 	text-align: center;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	padding-left: 25px;
+	padding-right: 25px;
 	height: 25px;
 	cursor:pointer;
 
@@ -53,7 +101,7 @@ h1 {
 	border-color: transparent;
 
 	animation-name: fade-in, pulse-border;
-	animation-duration: var(--fade-in-duration), var(--pulse-border-frequency);
+	animation-duration: var(--fade-in-duration), var(--pulse-border-period);
 	animation-iteration-count: 1, infinite;
 	animation-direction: normal, alternate;
 	animation-fill-mode: both, none;
@@ -61,6 +109,14 @@ h1 {
 	animation-delay: 
 		calc(var(--fade-in-duration) + 2 * var(--fade-in-delay)),
 		calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay));
+}
+@keyframes background-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 0.25;
+	}
 }
 @keyframes fade-in {
 	from {
@@ -81,8 +137,7 @@ h1 {
 	}
 }
 @media (min-width: 768px) {
-	.page {
-		padding-left: calc(50vw - var(--content-container-width) / 2);
-		padding-right: calc(50vw - var(--content-container-width) / 2);
+	.content-container {
+		width: var(--content-container-width);
 	}
 }
