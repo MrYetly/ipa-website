@@ -39,7 +39,7 @@ pre {
 	height: 100vh;
 	overflow: hidden;
 }
-.ascii-art-background {
+.ascii-art-portrait {
 	z-index: 1;
 	position: absolute;
 	left: 0;
@@ -66,26 +66,6 @@ pre {
 	animation-fill-mode: both;
 	animation-delay: var(--fade-in-duration);
 }
-.landing-menu {
-	font-family: "Jacquard 24", system-ui;
-	font-weight: 400;
-	font-style: normal;
-	font-size: 4rem;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1rem;
-	animation-name: fade-in;
-	animation-duration: var(--fade-in-duration);
-	animation-fill-mode: both;
-	animation-delay: var(--fade-in-duration);
-}
-
-.landing-menu span {
-	cursor: pointer;
-}
-
 .sub-greeting {
 	align-content: center;
 	text-align: center;
@@ -110,6 +90,53 @@ pre {
 		calc(var(--fade-in-duration) + 2 * var(--fade-in-delay)),
 		calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay));
 }
+.landing-menu {
+	font-family: "Jacquard 24", system-ui;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 4rem;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+}
+
+.landing-menu span {
+	cursor: pointer;
+	position: relative;
+	z-index: 2;
+}
+
+.menu-item {
+	position: relative;
+}
+
+.menu-item .ascii-art-hover {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	border: none;
+	font-size: 50px;
+	line-height: 1.0;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.menu-item:hover .ascii-art-hover {
+	opacity: 0.25;
+}
+.long-text {
+	max-height: 80vh;
+	overflow-y: scroll;
+}
+
 @keyframes background-fade-in {
 	from {
 		opacity: 0;

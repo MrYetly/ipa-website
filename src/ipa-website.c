@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "server.h"
 
@@ -45,7 +46,7 @@ cleanup:
 	return buffer;
 }
 
-void static_response(char *path, char *content_type,  http_response_t *res) {
+void static_response(const char *path, const char *content_type, http_response_t *res) {
 	char *body = NULL;
 	size_t body_size = 0;
 
@@ -54,10 +55,10 @@ void static_response(char *path, char *content_type,  http_response_t *res) {
 	if (body) {
 		res->status_code = 200;
 		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "OK");
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Length");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
 		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%zu", body_size);
 		++res->next_header_idx;
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Type");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Type");
 		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%s", content_type);
 		++res->next_header_idx;
 		res->body = body;
@@ -65,38 +66,74 @@ void static_response(char *path, char *content_type,  http_response_t *res) {
 	} else {
 		res->status_code = 500;
 		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "But why male models?");
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Context-Length");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
 		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "0");
 		++res->next_header_idx;
 	}
 }
 
+int is_htmx_request(const http_request_t *req) {
+	for (int i = 0; i < req->next_header_idx; ++i) {
+		if (strcmp(req->headers[i].key, "HX-Request") == 0 &&
+		    strcmp(req->headers[i].val, "true") == 0) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void page_response(const http_request_t *req, http_response_t *res, const char *snippet_path) {
+	if (is_htmx_request(req)) {
+		static_response(snippet_path, "text/html", res);
+	} else {
+		static_response(STATIC_DIR "index.html", "text/html", res);
+	}
+}
+
+void handle_index(const http_request_t *req, http_response_t *res) {
+	res->status_code = 302;
+	snprintf(res->reason_phrase, MAX_PHRASE_LEN, "Found");
+	snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Location");
+	snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "/landing");
+	++res->next_header_idx;
+	snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
+	snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "0");
+	++res->next_header_idx;
+}
+
 void handle_landing(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "index.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/landing.html");
 }
 
 void handle_home(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/home.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/home.html");
 }
 
 void handle_work(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/work.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/work.html");
 }
 
 void handle_play(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/play.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/play.html");
 }
 
 void handle_this_website(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/this-website.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/this-website.html");
 }
 
 void handle_my_interests(const http_request_t *req, http_response_t *res) {
-	static_response(STATIC_DIR "hx/my-interests.html", "text/html", res);
+	page_response(req, res, STATIC_DIR "hx/my-interests.html");
 }
 
 void handle_portrait(const http_request_t *req, http_response_t *res) {
 	static_response(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", "text/plain", res);
+}
+
+void handle_ascii_art(const http_request_t *req, http_response_t *res) {
+	const char *filename = req->path + strlen("/ascii-art/");
+	char path[512];
+	snprintf(path, sizeof(path), STATIC_DIR "ascii-art/%s.txt", filename);
+	static_response(path, "text/plain", res);
 }
 
 void handle_style(const http_request_t *req, http_response_t *res) {
@@ -109,13 +146,18 @@ void handle_script(const http_request_t *req, http_response_t *res) {
 
 int main(void) {
 	route_t routes[] = {
-		{"/", "GET", handle_landing},
-		{"/hx/home", "GET", handle_home},
-		{"/hx/work", "GET", handle_work},
-		{"/hx/play", "GET", handle_play},
-		{"/hx/this-website", "GET", handle_this_website},
-		{"/hx/my-interests", "GET", handle_my_interests},
-		{"/hx/ascii-art/portrait", "GET", handle_portrait},
+		{"/", "GET", handle_index},
+		{"/landing", "GET", handle_landing},
+		{"/home", "GET", handle_home},
+		{"/work", "GET", handle_work},
+		{"/play", "GET", handle_play},
+		{"/this-website", "GET", handle_this_website},
+		{"/my-interests", "GET", handle_my_interests},
+		{"/ascii-art/portrait", "GET", handle_portrait},
+		{"/ascii-art/work", "GET", handle_ascii_art},
+		{"/ascii-art/play", "GET", handle_ascii_art},
+		{"/ascii-art/this-website", "GET", handle_ascii_art},
+		{"/ascii-art/my-interests", "GET", handle_ascii_art},
 		{"/script.js", "GET", handle_script},
 		{"/style.css", "GET", handle_style}
 	};
