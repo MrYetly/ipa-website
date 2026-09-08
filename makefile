@@ -5,8 +5,11 @@ BIN_DIR:=bin
 BUILD_DIR:=build
 SRC_DIR:=src
 
-$(BIN_DIR)/ipa-website: $(BUILD_DIR)/ipa-website.o $(BUILD_DIR)/server.o | $(BIN_DIR)
+$(BIN_DIR)/ipa-website: $(BUILD_DIR)/ipa-website.o $(BUILD_DIR)/server.o static/ascii-art-sizes.css | $(BIN_DIR)
 	gcc $(CFLAGS) -o $(BIN_DIR)/ipa-website $(BUILD_DIR)/ipa-website.o $(BUILD_DIR)/server.o
+
+static/ascii-art-sizes.css: scripts/generate-ascii-sizes.py $(wildcard static/ascii-art/*.txt)
+	python3 scripts/generate-ascii-sizes.py
 $(BUILD_DIR)/ipa-website.o: $(SRC_DIR)/ipa-website.c $(SERVER_DIR)/server.h | $(BUILD_DIR)
 	gcc $(CFLAGS) -o $(BUILD_DIR)/ipa-website.o -c $(SRC_DIR)/ipa-website.c -I $(SERVER_DIR)
 $(BUILD_DIR)/server.o: $(SERVER_DIR)/server.c $(SERVER_DIR)/server.h | $(BUILD_DIR)

@@ -1,0 +1,11 @@
+#bg-my-interests { --bg-lines: 4; --bg-width-div: 8; }
+#bg-play-0 { --bg-lines: 450; --bg-width-div: 800; }
+#bg-play-1 { --bg-lines: 311; --bg-width-div: 379; }
+#bg-play-2 { --bg-lines: 892; --bg-width-div: 1190; }
+#bg-play-3 { --bg-lines: 1190; --bg-width-div: 892; }
+#bg-play-4 { --bg-lines: 840; --bg-width-div: 630; }
+#bg-play-5 { --bg-lines: 630; --bg-width-div: 840; }
+#bg-play-6 { --bg-lines: 570; --bg-width-div: 760; }
+#bg-play-7 { --bg-lines: 426; --bg-width-div: 240; }
+#bg-portrait { --bg-lines: 400; --bg-width-div: 800; }
+#bg-work { --bg-lines: 4; --bg-width-div: 7; }

@@ -5,10 +5,9 @@
 	--fade-in-delay: 0.5s;
 	--pulse-border-period: 2s;
 	--pulse-border-delay: 0s;
-	--ascii-art-portrait-height: 400;
-	--ascii-art-portrait-width: 800;
-	--ascii-art-font-size: max(calc(100vh/var(--ascii-art-portrait-height)), calc(100vw/var(--ascii-art-portrait-width)));
-	--ascii-art-width: calc(var(--ascii-art-portrait-width) * var(--ascii-art-font-size));
+}
+html, body {
+	overflow: hidden;
 }
 body {
 	min-height: 100vh;
@@ -41,17 +40,38 @@ pre {
 }
 .ascii-art-portrait {
 	z-index: 1;
-	position: absolute;
+	position: fixed;
+	top: 0;
 	left: 0;
 	margin: 0;
-	width: var(--ascii-art-width);
-	font-size: var(--ascii-art-font-size);
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	pointer-events: none;
+	white-space: pre;
+	line-height: 1.0;
+	letter-spacing: 0;
+	--bg-lines: 1;
+	--bg-width-div: 1;
+	font-size: max(calc(100vh / var(--bg-lines)), calc(100vw / var(--bg-width-div)));
+	width: calc(var(--bg-width-div) * 1em);
+}
 
+.ascii-art-portrait.bg-active {
+	opacity: 0.25;
+}
+
+#bg-portrait.bg-active {
 	animation-name: background-fade-in;
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode: both;
 	animation-timing-function: ease;
 	animation-delay: calc(var(--fade-in-duration) * 2);
+}
+
+.ascii-art-portrait.code-drift {
+	font-size: max(18px, 1.5vw);
+	width: auto;
+	transition: opacity 0.5s ease, transform 8s ease-in-out;
 }
 .content-container {
 	z-index: 2;

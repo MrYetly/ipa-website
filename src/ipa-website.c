@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "server.h"
 
@@ -90,60 +91,6 @@ void page_response(const http_request_t *req, http_response_t *res, const char *
 	}
 }
 
-char *create_ascii_art_background_div(char *ascii_art_txt_path, size_t *file_size) {
-	size_t div_size;
-	size_t ascii_art_size;
-	char *div = load_file(STATIC_DIR "hx/ascii-art-background.html", &div_size);
-	char *ascii_art = load_file(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", &ascii_art_size);
-
-	*file_size = div_size + ascii_art_size;
-	char *hx_element = malloc(file_size + 1); //leave room for \0 incase we want to print
-
-	char *div_ptr = div;
-	char *hx_element_ptr = hx_element;
-
-	for (int i = 0; i < (int *)div_size; i++) {
-		*hx_element_ptr = *div_ptr;
-		if (*div_ptr == '>' && (div_ptr-div) != (int *)div_size) {
-			memcpy(++hx_element_ptr, ascii_art, ascii_art_size);
-			hx_element_ptr += (int *)ascii_art_size;
-		}  else {
-			hx_element_ptr++;
-		}
-		div_ptr++;
-	}
-	*(hx_element + filesize) = '\0';
-	free(div);
-	free(ascii_art);
-	return hx_element
-}
-
-void ascii_art_background_response(const char *art_path, http_response_t *res) {
-	char *body = NULL;
-	size_t body_size = 0;
-
-	body = create_ascii_art_background_div(art_path, &body_size);
-
-	if (body) {
-		res->status_code = 200;
-		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "OK");
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
-		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%zu", body_size);
-		++res->next_header_idx;
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Type");
-		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%s", "text/html");
-		++res->next_header_idx;
-		res->body = body;
-		res->body_size = body_size;
-	} else {
-		res->status_code = 500;
-		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "But why male models?");
-		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
-		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "0");
-		++res->next_header_idx;
-	}
-}
-
 void handle_index(const http_request_t *req, http_response_t *res) {
 	res->status_code = 302;
 	snprintf(res->reason_phrase, MAX_PHRASE_LEN, "Found");
@@ -183,6 +130,55 @@ void handle_ascii_art_portrait(const http_request_t *req, http_response_t *res) 
 	static_response(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", "text/plain", res);
 }
 
+void handle_ascii_art_work(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/work.txt", "text/plain", res);
+}
+
+void handle_ascii_art_play_0(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-0.txt", "text/plain", res);
+}
+void handle_ascii_art_play_1(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-1.txt", "text/plain", res);
+}
+void handle_ascii_art_play_2(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-2.txt", "text/plain", res);
+}
+void handle_ascii_art_play_3(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-3.txt", "text/plain", res);
+}
+void handle_ascii_art_play_4(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-4.txt", "text/plain", res);
+}
+void handle_ascii_art_play_5(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-5.txt", "text/plain", res);
+}
+void handle_ascii_art_play_6(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-6.txt", "text/plain", res);
+}
+void handle_ascii_art_play_7(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/play-7.txt", "text/plain", res);
+}
+
+void handle_ascii_art_this_website(const http_request_t *req, http_response_t *res) {
+	static const char *files[] = {
+		"src/ipa-website.c",
+		"vine-street/server.c",
+		"vine-street/server.h",
+	};
+	static const size_t count = sizeof(files) / sizeof(files[0]);
+
+	size_t idx = (size_t)rand() % count;
+	static_response(files[idx], "text/plain", res);
+}
+
+void handle_ascii_art_my_interests(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art/my-interests.txt", "text/plain", res);
+}
+
+void handle_ascii_art_sizes(const http_request_t *req, http_response_t *res) {
+	static_response(STATIC_DIR "ascii-art-sizes.css", "text/css", res);
+}
+
 void handle_style(const http_request_t *req, http_response_t *res) {
 	static_response(STATIC_DIR "style.css", "text/css", res);
 }
@@ -200,8 +196,19 @@ int main(void) {
 		{"/play", "GET", handle_play},
 		{"/this-website", "GET", handle_this_website},
 		{"/my-interests", "GET", handle_my_interests},
-		{"/ascii-art/portrait", "GET", handle_portrait},
-		{"/ascii-art/this-website", "GET", handle_ascii_art},
+		{"/ascii-art/portrait", "GET", handle_ascii_art_portrait},
+		{"/ascii-art/work", "GET", handle_ascii_art_work},
+		{"/ascii-art/play/0", "GET", handle_ascii_art_play_0},
+		{"/ascii-art/play/1", "GET", handle_ascii_art_play_1},
+		{"/ascii-art/play/2", "GET", handle_ascii_art_play_2},
+		{"/ascii-art/play/3", "GET", handle_ascii_art_play_3},
+		{"/ascii-art/play/4", "GET", handle_ascii_art_play_4},
+		{"/ascii-art/play/5", "GET", handle_ascii_art_play_5},
+		{"/ascii-art/play/6", "GET", handle_ascii_art_play_6},
+		{"/ascii-art/play/7", "GET", handle_ascii_art_play_7},
+		{"/ascii-art/this-website", "GET", handle_ascii_art_this_website},
+		{"/ascii-art/my-interests", "GET", handle_ascii_art_my_interests},
+		{"/ascii-art-sizes.css", "GET", handle_ascii_art_sizes},
 		{"/script.js", "GET", handle_script},
 		{"/style.css", "GET", handle_style}
 	};
@@ -210,6 +217,7 @@ int main(void) {
 		.routes = routes,
 		.route_count = route_count,
 	};
-	
+
+	srand((unsigned int)time(NULL));
 	app(&app_init);
 }

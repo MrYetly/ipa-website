@@ -17,8 +17,13 @@
 	<!-- get my own style and scripts-->
 	<script src="/script.js" defer></script>
 	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="/ascii-art-sizes.css">
 </head>
 <body>
+	<div id="ascii-art-backgrounds">
+		<pre id="bg-portrait" class="ascii-art-portrait bg-active"></pre>
+	</div>
+	<div hx-get="/ascii-art/portrait" hx-trigger="load" hx-target="#bg-portrait" hx-swap="innerHTML" style="display:none;"></div>
 	<div class="page">
 		<div hx-get="" hx-target=".page" hx-trigger="load"></div>
 	</div>
