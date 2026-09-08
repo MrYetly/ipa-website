@@ -51,7 +51,7 @@ pre {
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode: both;
 	animation-timing-function: ease;
-	animation-delay: calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay) + var(--pulse-border-period));
+	animation-delay: calc(var(--fade-in-duration) * 2);
 }
 .content-container {
 	z-index: 2;
@@ -64,7 +64,6 @@ pre {
 	animation-name: fade-in;
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode: both;
-	animation-delay: var(--fade-in-duration);
 }
 .sub-greeting {
 	align-content: center;
@@ -87,8 +86,8 @@ pre {
 	animation-fill-mode: both, none;
 	animation-timing-function: ease, ease-in-out;
 	animation-delay: 
-		calc(var(--fade-in-duration) + 2 * var(--fade-in-delay)),
-		calc(2 * var(--fade-in-duration) + 2 * var(--fade-in-delay) + var(--pulse-border-delay));
+		calc(var(--fade-in-duration)),
+		calc(var(--fade-in-duration) * 2);
 }
 .landing-menu {
 	font-family: "Jacquard 24", system-ui;
@@ -112,7 +111,7 @@ pre {
 	position: relative;
 }
 
-.menu-item .ascii-art-hover {
+.ascii-art-hover {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -129,7 +128,7 @@ pre {
 	z-index: 0;
 }
 
-.menu-item:hover .ascii-art-hover {
+.page:has(.menu-item:hover) .ascii-art-hover {
 	opacity: 0.25;
 }
 .long-text {

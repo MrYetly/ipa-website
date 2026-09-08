@@ -6,7 +6,7 @@
 
 #define STATIC_DIR "/home/deploy/dev/ipa-website/static/"
 
-char *load_html(const char *filename, size_t *file_size) {
+char *load_text_file(const char *filename, size_t *file_size) {
 	FILE *f = NULL;
 	char *buffer = NULL;
 	long size;
@@ -50,7 +50,7 @@ void static_response(const char *path, const char *content_type, http_response_t
 	char *body = NULL;
 	size_t body_size = 0;
 
-	body = load_html(path, &body_size);
+	body = load_text_file(path, &body_size);
 
 	if (body) {
 		res->status_code = 200;
@@ -90,6 +90,60 @@ void page_response(const http_request_t *req, http_response_t *res, const char *
 	}
 }
 
+char *create_ascii_art_background_div(char *ascii_art_txt_path, size_t *file_size) {
+	size_t div_size;
+	size_t ascii_art_size;
+	char *div = load_file(STATIC_DIR "hx/ascii-art-background.html", &div_size);
+	char *ascii_art = load_file(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", &ascii_art_size);
+
+	*file_size = div_size + ascii_art_size;
+	char *hx_element = malloc(file_size + 1); //leave room for \0 incase we want to print
+
+	char *div_ptr = div;
+	char *hx_element_ptr = hx_element;
+
+	for (int i = 0; i < (int *)div_size; i++) {
+		*hx_element_ptr = *div_ptr;
+		if (*div_ptr == '>' && (div_ptr-div) != (int *)div_size) {
+			memcpy(++hx_element_ptr, ascii_art, ascii_art_size);
+			hx_element_ptr += (int *)ascii_art_size;
+		}  else {
+			hx_element_ptr++;
+		}
+		div_ptr++;
+	}
+	*(hx_element + filesize) = '\0';
+	free(div);
+	free(ascii_art);
+	return hx_element
+}
+
+void ascii_art_background_response(const char *art_path, http_response_t *res) {
+	char *body = NULL;
+	size_t body_size = 0;
+
+	body = create_ascii_art_background_div(art_path, &body_size);
+
+	if (body) {
+		res->status_code = 200;
+		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "OK");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%zu", body_size);
+		++res->next_header_idx;
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Type");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "%s", "text/html");
+		++res->next_header_idx;
+		res->body = body;
+		res->body_size = body_size;
+	} else {
+		res->status_code = 500;
+		snprintf(res->reason_phrase, MAX_PHRASE_LEN, "But why male models?");
+		snprintf(res->headers[res->next_header_idx].key, MAX_HEADER_KEY_LEN, "Content-Length");
+		snprintf(res->headers[res->next_header_idx].val, MAX_HEADER_VAL_LEN, "0");
+		++res->next_header_idx;
+	}
+}
+
 void handle_index(const http_request_t *req, http_response_t *res) {
 	res->status_code = 302;
 	snprintf(res->reason_phrase, MAX_PHRASE_LEN, "Found");
@@ -125,15 +179,8 @@ void handle_my_interests(const http_request_t *req, http_response_t *res) {
 	page_response(req, res, STATIC_DIR "hx/my-interests.html");
 }
 
-void handle_portrait(const http_request_t *req, http_response_t *res) {
+void handle_ascii_art_portrait(const http_request_t *req, http_response_t *res) {
 	static_response(STATIC_DIR "ascii-art/portrait-for-background-ascii-art.txt", "text/plain", res);
-}
-
-void handle_ascii_art(const http_request_t *req, http_response_t *res) {
-	const char *filename = req->path + strlen("/ascii-art/");
-	char path[512];
-	snprintf(path, sizeof(path), STATIC_DIR "ascii-art/%s.txt", filename);
-	static_response(path, "text/plain", res);
 }
 
 void handle_style(const http_request_t *req, http_response_t *res) {
@@ -154,10 +201,7 @@ int main(void) {
 		{"/this-website", "GET", handle_this_website},
 		{"/my-interests", "GET", handle_my_interests},
 		{"/ascii-art/portrait", "GET", handle_portrait},
-		{"/ascii-art/work", "GET", handle_ascii_art},
-		{"/ascii-art/play", "GET", handle_ascii_art},
 		{"/ascii-art/this-website", "GET", handle_ascii_art},
-		{"/ascii-art/my-interests", "GET", handle_ascii_art},
 		{"/script.js", "GET", handle_script},
 		{"/style.css", "GET", handle_style}
 	};
