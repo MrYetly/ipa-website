@@ -46,9 +46,9 @@ pre {
 	margin: 0;
 	pointer-events: none;
 	white-space: pre;
+	font-family: "Lucida Console", Monaco, "Courier New", Courier, monospace;
 	line-height: 1.0;
 	letter-spacing: 0;
-	font-family: monospace;
 	animation-name: background-fade-in;
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode:both;
