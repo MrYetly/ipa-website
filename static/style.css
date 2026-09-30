@@ -23,12 +23,6 @@ h1 {
 	font-weight: 400;
 	font-style: normal;
 }
-pre {
-  font-family: "Lucida Console", Monaco, "Courier New", Courier, monospace;
-  font-size: 14px;
-  line-height: 1.0; /* Prevents vertical gaps between lines */
-  letter-spacing: 0; /* Keeps horizontal spacing exact */
-}
 .page {
 	position: relative;
 	display: flex;
@@ -46,7 +40,7 @@ pre {
 	margin: 0;
 	pointer-events: none;
 	white-space: pre;
-	font-family: "Lucida Console", Monaco, "Courier New", Courier, monospace;
+	font-family: "Courier New", Courier, monospace;
 	line-height: 1.0;
 	letter-spacing: 0;
 	animation-name: background-fade-in;
@@ -130,7 +124,7 @@ pre {
 		opacity: 0;
 	}
 	to {
-		opacity: 0.33;
+		opacity: 0.5;
 	}
 }
 @keyframes fade-in {
