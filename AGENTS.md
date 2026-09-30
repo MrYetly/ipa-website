@@ -2,17 +2,14 @@
 
 ## Build & Run
 - `make` — compiles `bin/ipa-website` from `src/ipa-website.c` and `vine-street/server.c` via `gcc -g -O0`.
-- `./bin/ipa-website` — runs the server on `127.0.0.1:1362`.
+- `./bin/ipa-website` — runs the server on `127.0.0.1:8999`.
+- `./bin/ipa-website -p <port> -s <static_dir>` — overrides the default port and/or static directory at runtime.
 - There are **no tests, no CI, and no package manager**. Verify manually with `curl`.
 
 ## Architecture
 - **`src/ipa-website.c`** — application layer: defines routes, handlers, and static file responses. Edit this to add pages or change routing.
-- **`vine-street/server.c`** and **`vine-street/server.h`** — custom async HTTP server runtime (epoll + eventfd + pthreads). Hardcoded to `PORT 1362`, `NUM_WORKER_THREADS 7`, `ADDRESS INADDR_LOOPBACK`.
-- `src/ipa-website.c` defines a **hardcoded absolute path** for static assets:
-  ```c
-  #define STATIC_DIR "/home/deploy/dev/ipa-website/static/"
-  ```
-  If the repository is moved to a different directory, the binary will fail to load static files unless this macro is updated and the project is rebuilt.
+- **`vine-street/server.c`** and **`vine-street/server.h`** — custom async HTTP server runtime (epoll + eventfd + pthreads). Defaults to `PORT 8999`, `NUM_WORKER_THREADS 7`, `ADDRESS INADDR_LOOPBACK`.
+- Static assets default to `/home/deploy/dev/ipa-website/static/` but can be overridden at runtime with `-s <static_dir>`.
 
 ## Frontend Architecture
 - **HTMX forward approach**: `.page` is the persistent shell. Navigation swaps content into `#content-container` via `hx-target`. The ASCII art background and page shell remain intact during HTMX requests.

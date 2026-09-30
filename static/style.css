@@ -38,44 +38,29 @@ pre {
 	height: 100vh;
 	overflow: hidden;
 }
-.ascii-art-portrait {
+.ascii-art {
 	z-index: 1;
 	position: fixed;
 	top: 0;
 	left: 0;
 	margin: 0;
-	opacity: 0;
-	transition: opacity 0.5s ease;
 	pointer-events: none;
 	white-space: pre;
 	line-height: 1.0;
 	letter-spacing: 0;
-	--bg-lines: 1;
-	--bg-width-div: 1;
-	font-size: max(calc(100vh / var(--bg-lines)), calc(100vw / var(--bg-width-div)));
-	width: calc(var(--bg-width-div) * 1em);
-}
-
-.ascii-art-portrait.bg-active {
-	opacity: 0.25;
-}
-
-#bg-portrait.bg-active {
+	font-family: monospace;
 	animation-name: background-fade-in;
 	animation-duration: var(--fade-in-duration);
-	animation-fill-mode: both;
-	animation-timing-function: ease;
-	animation-delay: calc(var(--fade-in-duration) * 2);
+	animation-fill-mode:both;
+	animation-delay: var(--fade-in-delay);
 }
 
-.ascii-art-portrait.code-drift {
-	font-size: max(18px, 1.5vw);
-	width: auto;
-	transition: opacity 0.5s ease, transform 8s ease-in-out;
-}
 .content-container {
 	z-index: 2;
 	background-color: transparent;
+	padding-left: 20px;
+	padding-right: 20px;
+	width:100dvw;
 }
 .greeting {
 	font-size: 4rem;
@@ -83,6 +68,7 @@ pre {
 	background-color: transparent;
 	animation-name: fade-in;
 	animation-duration: var(--fade-in-duration);
+	animation-delay: calc(var(--fade-in-delay) + var(--fade-in-duration));
 	animation-fill-mode: both;
 }
 .sub-greeting {
@@ -92,7 +78,7 @@ pre {
 	margin-bottom: 0px;
 	padding-left: 25px;
 	padding-right: 25px;
-	height: 25px;
+	min-height: 25px;
 	cursor:pointer;
 
 	border-style: solid;
@@ -106,14 +92,14 @@ pre {
 	animation-fill-mode: both, none;
 	animation-timing-function: ease, ease-in-out;
 	animation-delay: 
-		calc(var(--fade-in-duration)),
-		calc(var(--fade-in-duration) * 2);
+		calc(var(--fade-in-duration) + var(--fade-in-delay) * 2),
+		calc(var(--fade-in-duration) + var(--fade-in-delay) * 2 + var(--fade-in-duration));
 }
 .landing-menu {
 	font-family: "Jacquard 24", system-ui;
 	font-weight: 400;
 	font-style: normal;
-	font-size: 4rem;
+	font-size: 10dvw;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -131,29 +117,12 @@ pre {
 	position: relative;
 }
 
-.ascii-art-hover {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	margin: 0;
-	padding: 0;
-	border: none;
-	font-size: 50px;
-	line-height: 1.0;
-	opacity: 0;
-	transition: opacity 0.3s ease;
-	pointer-events: none;
-	z-index: 0;
-}
-
-.page:has(.menu-item:hover) .ascii-art-hover {
-	opacity: 0.25;
-}
 .long-text {
 	max-height: 80vh;
 	overflow-y: scroll;
+	background-color: white;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 @keyframes background-fade-in {
@@ -161,7 +130,7 @@ pre {
 		opacity: 0;
 	}
 	to {
-		opacity: 0.25;
+		opacity: 0.33;
 	}
 }
 @keyframes fade-in {
@@ -182,8 +151,36 @@ pre {
 		border-color: black;
 	}
 }
-@media (min-width: 768px) {
+.social-links {
+	display: flex;
+	justify-content: center;
+	gap: 1.5rem;
+	margin-top: 2rem;
+}
+
+.social-links a {
+	font-family: "Libertinus Serif", system-ui;
+	font-weight: 400;
+	font-size: 1.1rem;
+	color: black;
+	text-decoration: none;
+	border: 1px solid black;
+	padding: 0.3rem 0.9rem;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.social-links a:hover {
+	background-color: black;
+	color: white;
+}
+
+@media (min-width: 500px) {
 	.content-container {
 		width: var(--content-container-width);
+	}
+	.landing-menu {
+		font-size: calc(var(--content-container-width)/10);
+	}
+	.menu-item {
 	}
 }

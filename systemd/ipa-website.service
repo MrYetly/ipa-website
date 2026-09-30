@@ -1,0 +1,16 @@
+[Unit]
+Description=personal website deployment
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/home/deploy/dev/ipa-website
+EnvironmentFile=-/etc/default/ipa-website
+ExecStartPre=/usr/bin/make
+ExecStart=/bin/bash -c 'exec ./bin/ipa-website ${PORT:+-p "$PORT"} ${STATIC_DIR:+-s "$STATIC_DIR"}'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

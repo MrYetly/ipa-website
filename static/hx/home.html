@@ -1,16 +1,12 @@
-<div class="content-container">
-	<nav class="landing-menu">
-		<div class="menu-item">
-			<span hx-get="/work" hx-push-url="true" hx-target=".page" hx-on:mouseenter='activateBg("bg-work")'>Work</span>
-		</div>
-		<div class="menu-item">
-			<span hx-get="/play" hx-push-url="true" hx-target=".page" hx-on:mouseenter='activateBg("bg-play")'>Play</span>
-		</div>
-		<div class="menu-item">
-			<span hx-get="/this-website" hx-push-url="true" hx-target=".page" hx-on:mouseenter='activateBg("bg-this-website")'>This Website</span>
-		</div>
-		<div class="menu-item">
-			<span hx-get="/my-interests" hx-push-url="true" hx-target=".page" hx-on:mouseenter='activateBg("bg-my-interests")'>My Interests</span>
-		</div>
-	</nav>
+<nav class="landing-menu">
+	<div class="menu-item">
+		<span hx-get="/this-website" hx-push-url="true" hx-target=".content-container">This Website</span>
+	</div>
+	<div class="menu-item">
+		<span hx-get="/my-interests" hx-push-url="true" hx-target=".content-container">My Interests</span>
+	</div>
+</nav>
+<div class="social-links">
+	<a href="https://www.linkedin.com/in/ivan-anich-71b99693">LinkedIn</a>
+	<a href="https://github.com/MrYetly">GitHub</a>
 </div>
