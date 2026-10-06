@@ -32,21 +32,24 @@ h1 {
 	height: 100vh;
 	overflow: hidden;
 }
-.ascii-art {
-	z-index: 1;
+.ascii-art-svg {
 	position: fixed;
 	top: 0;
 	left: 0;
 	margin: 0;
+	width: 100vw;
+	height: 100dvh;
 	pointer-events: none;
-	white-space: pre;
-	font-family: "Courier New", Courier, monospace;
-	line-height: 1.0;
-	letter-spacing: 0;
+	z-index: 1;
 	animation-name: background-fade-in;
 	animation-duration: var(--fade-in-duration);
 	animation-fill-mode:both;
 	animation-delay: var(--fade-in-delay);
+}
+
+.ascii-art-svg text {
+	font-family: 'Courier New', Courier, monospace;
+	letter-spacing: 0;
 }
 
 .content-container {
@@ -124,7 +127,7 @@ h1 {
 		opacity: 0;
 	}
 	to {
-		opacity: 0.5;
+		opacity: 1;
 	}
 }
 @keyframes fade-in {

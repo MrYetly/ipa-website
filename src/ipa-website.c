@@ -12,9 +12,12 @@ static char static_dir[2048] = DEFAULT_STATIC_DIR;
 static void build_static_path(char *out, size_t out_size, const char *relative) {
 	snprintf(out, out_size, "%s%s", static_dir, relative);
 }
-#define MAX_INLINE_STYLE_LEN 200
-#define STYLE_MATCH "{{inline_style}}"
+#define MAX_VIEWBOX_LEN 50
+#define VIEWBOX_MATCH "{{viewbox_width_height}}"
 #define ASCII_ART_MATCH "{{ascii_art}}"
+#define TSPAN_OPEN "<tspan x=\"0\" dy=\"1em\">"
+#define TSPAN_CLOSE "</tspan>"
+#define TSPAN_OVERHEAD_PER_LINE (sizeof(TSPAN_OPEN) - 1 + sizeof(TSPAN_CLOSE) - 1)
 
 char *load_text_file(const char *filename, size_t *file_size) {
 	FILE *f = NULL;
@@ -157,7 +160,7 @@ void handle_ascii_art_portrait(const http_request_t *req, http_response_t *res) 
 	size_t body_size = 0;
 	int width = 0;
 	int height = 0;
-	char inline_style[MAX_INLINE_STYLE_LEN];
+	char viewbox_width_height[MAX_VIEWBOX_LEN];
 	char ascii_path[2048];
 	char div_path[2048];
 	build_static_path(ascii_path, sizeof(ascii_path), "ascii-art/portrait-for-background-ascii-art.txt");
@@ -185,10 +188,22 @@ void handle_ascii_art_portrait(const http_request_t *req, http_response_t *res) 
 		return;
 	}
 	
-	//monospace character boxes are twice as tall as height, roughly, so need to adjust aspect ratio by dividing width by 2
-	snprintf(inline_style, MAX_INLINE_STYLE_LEN, "font-size: max(100dvw / (%d / 2), 100dvh / %d)", width, height); 
+	//monospace character boxes typically have an aspect ratio around 0.6:1 (e.g. Courier New)
+	snprintf(
+			viewbox_width_height,
+			MAX_VIEWBOX_LEN,
+			"%d %d",
+			(width * 6) / 10, height); 
 
-	body_size = ascii_art_size + div_size + strlen(inline_style);
+	int line_count = 0;
+	for (size_t i = 0; i < ascii_art_size; i++) {
+		if (ascii_art[i] == '\n') line_count++;
+	}
+	if (ascii_art_size > 0 && ascii_art[ascii_art_size - 1] != '\n') {
+		line_count++;
+	}
+
+	body_size = ascii_art_size + div_size + strlen(viewbox_width_height) + (line_count * TSPAN_OVERHEAD_PER_LINE);
 	body = malloc(body_size + 1);
 	if (!body) {
 		free(ascii_art);
@@ -205,14 +220,33 @@ void handle_ascii_art_portrait(const http_request_t *req, http_response_t *res) 
 	//build div
 	for (size_t i = 0; i < div_size; i++) {
 		if (i + 1 < div_size && *(div + i) == '{' && *(div + i + 1) == '{') {
-			if (memcmp(STYLE_MATCH, div + i, strlen(STYLE_MATCH)) == 0) {
-				size_t len = strlen(inline_style);
-				memcpy(ptr, inline_style, len);
+			if (memcmp(VIEWBOX_MATCH, div + i, strlen(VIEWBOX_MATCH)) == 0) {
+				size_t len = strlen(viewbox_width_height);
+				memcpy(ptr, viewbox_width_height, len);
 				ptr += len;
-				i += strlen(STYLE_MATCH) - 1;
+				i += strlen(VIEWBOX_MATCH) - 1;
 			} else if (memcmp(ASCII_ART_MATCH, div + i, strlen(ASCII_ART_MATCH)) == 0) {
-				memcpy(ptr, ascii_art, ascii_art_size);
-				ptr += ascii_art_size;
+				size_t art_idx = 0;
+				int in_tspan = 0;
+				while (art_idx < ascii_art_size) {
+					if (!in_tspan) {
+						memcpy(ptr, TSPAN_OPEN, sizeof(TSPAN_OPEN) - 1);
+						ptr += sizeof(TSPAN_OPEN) - 1;
+						in_tspan = 1;
+					}
+					char c = ascii_art[art_idx++];
+					if (c == '\n') {
+						memcpy(ptr, TSPAN_CLOSE, sizeof(TSPAN_CLOSE) - 1);
+						ptr += sizeof(TSPAN_CLOSE) - 1;
+						in_tspan = 0;
+					} else if (c != '\r') {
+						*ptr++ = c;
+					}
+				}
+				if (in_tspan) {
+					memcpy(ptr, TSPAN_CLOSE, sizeof(TSPAN_CLOSE) - 1);
+					ptr += sizeof(TSPAN_CLOSE) - 1;
+				}
 				i += strlen(ASCII_ART_MATCH) - 1;
 			} else {
 				*ptr = *(div + i);
